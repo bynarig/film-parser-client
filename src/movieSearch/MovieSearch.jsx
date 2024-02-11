@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 const MovieSearchComponent = () => {
   const [movieTitle, setMovieTitle] = useState('');
-  const [movieData, setMovieData] = useState(null);
+  const [movieData, setMovieData] = useState([]);
   const [loading, setLoading] = useState(false);
 
   const fetchData = async () => {
@@ -16,7 +16,7 @@ const MovieSearchComponent = () => {
 
       const data = await response.json();
       console.log('Fetched data:', data);
-      setMovieData(data);
+      setMovieData(prevData => [...prevData, data]); // Append new data to existing data array
     } catch (error) {
       console.error('Error fetching data:', error.message);
     } finally {
@@ -44,15 +44,24 @@ const MovieSearchComponent = () => {
       </label>
       {loading ? (
         <p>Loading...</p>
-      ) : movieData ? (
-        <div>
-          <h2>{movieData.Title}</h2>
-          <p>Year: {movieData.Year}</p>
-          <p>Rated: {movieData.Rated}</p>
-          <img src={movieData.Poster}></img>
-          <p>Released: {movieData.Released}</p>
-          {/* Add more details as needed */}
-        </div>
+      ) : movieData.length > 0 ? (
+        movieData.map((response, index) => (
+          <div key={index}>
+            <h2>Response {index + 1}</h2>
+            {response.Response === "True" ? (
+              response.Search.map((movie, movieIndex) => (
+                <div key={movie.imdbID}>
+                  <h3>{movie.Title}</h3>
+                  <p>Year: {movie.Year}</p>
+                  <p>Type: {movie.Type}</p>
+                  <img src={movie.Poster} alt={movie.Title}></img>
+                </div>
+              ))
+            ) : (
+              <p>No data found</p>
+            )}
+          </div>
+        ))
       ) : (
         <p>No data found</p>
       )}
