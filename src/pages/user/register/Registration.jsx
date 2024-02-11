@@ -5,7 +5,8 @@ function Registration() {
   const [formData, setFormData] = useState({
     username: '',
     email: '',
-    password: ''
+    password: '',
+    phone: ''
   });
 
   const handleChange = (e) => {
@@ -18,6 +19,7 @@ function Registration() {
 
   async function handleSubmit(e) {
   e.preventDefault();
+  console.log(formData);
   try {
     const response = await fetch('http://localhost:3000/user/register', {
       method: 'POST',
@@ -27,12 +29,13 @@ function Registration() {
       body: JSON.stringify(formData)
     });
 
-    if (!response.ok) {
+    if (!response.status === 200) {
       throw new Error('Network response was not ok');
     }
 
     // Handle success, e.g., show a success message or redirect the user
     console.log('Registration successful');
+
   } catch (error) {
     // Handle error, e.g., show an error message to the user
     console.error('There was a problem with your registration:', error.message);
@@ -51,6 +54,17 @@ function Registration() {
             id="username"
             name="username"
             value={formData.username}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="form-group">
+          <label htmlFor="phone">Phone:</label>
+          <input
+            type="text"
+            id="phone"
+            name="phone"
+            value={formData.phone}
             onChange={handleChange}
             required
           />
@@ -79,8 +93,7 @@ function Registration() {
         </div>
         <button type="submit">Register</button>
       </form>
-    </div>
-  );
+    </div>);
 }
 
 export default Registration;
